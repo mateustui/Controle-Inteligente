@@ -1,0 +1,9 @@
+auto valores(polos)=([a]-[b][k])
+
+
+file:///C:/Users/Mateus/Meu%20Drive/Compartilhado/eng/5%C2%BAperiodo/controle/Katsuhiko%20Ogata%20-%20Engenharia%20de%20Controle%20Moderno-Pearson%20_%20Prentice%20Hall%20(2010).pdf
+
+url local livro controle pg 74 - modelagem pendulo
+
+
+https://fab.cba.mit.edu/classes/864.17/people/copplestone/final_project/index.html
