@@ -4,6 +4,26 @@ from scipy import linalg
 from sklearn.neural_network import MLPRegressor
 import pandas as pd
 import pickle
+from sklearn.model_selection import train_test_split
+
+Dados = pd.read_csv(r'C:\Users\Mateus\Meu Drive\Compartilhado\eng\9_periodo\Controle inteligente\Trabalho 3\PenduloInvertidoFuzzyArtigo.csv', on_bad_lines='skip', header=None)
+# Dados.values
+# Dados.head(5)
+# print(Dados)
+
+Entradas = Dados.iloc[:,:-1]
+Entradas.shape
+Saidas = Dados.iloc[:,4]
+
+Xtrain, Xtest, Ytrain, Ytest=train_test_split(Entradas,Saidas,test_size=0.33)
+rede=MLPRegressor(hidden_layer_sizes=[128,128,64],
+                  activation='relu',
+                  max_iter=100000)
+rede.fit(Xtrain,Ytrain)
+r2train=rede.score(Xtrain, Ytrain)
+print("R2 Score do treinamento: ", r2train)
+r2test=rede.score(Xtest, Ytest)
+print("R2 Score do teste: ", r2test)
 
 class InvertedPendulum():
     # Initialize environment.
@@ -154,32 +174,17 @@ I = m*L**2 / 12
 # sensores[3]: velocidade angular.
 # SETPOINT em env.xRef.
 
-Dados = pd.read_csv(r'C:\Users\Mateus\Desktop\Trabalho 3\PenduloInvertidoFuzzyArtigo.csv', on_bad_lines='skip', header=None)
-# Dados.values
-# Dados.head(5)
-# print(Dados)
 
-Entradas = Dados.iloc[:,:-1]
-Entradas.shape
-Saidas = Dados.iloc[:,4]
-# Entradas.head()
-# Saidas.head()
-
-Modelo = MLPRegressor(hidden_layer_sizes=[64,32,8,4,2,1], activation='relu', solver='adam', max_iter=1000000)
-Modelo.fit(Entradas, Saidas)
-
-filename = '64Neuronios.sav'
-pickle.dump(Modelo, open(filename, 'wb'))
-loaded_model = pickle.load(open(filename, 'rb'))
-Sensores=np.zeros(4)
+Sensores_sim=np.zeros(4)
 # Função de controle: Ação nula.
 def funcao_controle_1(sensores):
     
-    Sensores[0]=sensores[0]-env.xRef
-    Sensores[1]=sensores[1]
-    Sensores[2]=sensores[2]
-    Sensores[3]=sensores[3]
-    acao = Modelo.predict(Sensores)
+    Sensores_sim[0]=env.xRef-sensores[0]
+    Sensores_sim[1]=sensores[1]
+    Sensores_sim[2]=sensores[2]
+    Sensores_sim[3]=sensores[3]
+    acao=rede.predict([Sensores_sim])
+    print(acao)
     return acao
 
 
