@@ -5,25 +5,11 @@ from sklearn.neural_network import MLPRegressor
 import pandas as pd
 import pickle
 from sklearn.model_selection import train_test_split
+import random
 
-Dados = pd.read_csv(r'C:\Users\Mateus\Meu Drive\Compartilhado\eng\9_periodo\Controle inteligente\Trabalho 3\PenduloInvertidoFuzzyArtigo.csv', on_bad_lines='skip', header=None)
-# Dados.values
-# Dados.head(5)
-# print(Dados)
 
-Entradas = Dados.iloc[:,:-1]
-Entradas.shape
-Saidas = Dados.iloc[:,4]
+rede = pickle.load(open(r'C:\Users\Mateus\Meu Drive\Compartilhado\eng\9_periodo\Controle inteligente\Trabalho 3\finalized_model4421.sav', 'rb'))
 
-Xtrain, Xtest, Ytrain, Ytest=train_test_split(Entradas,Saidas,test_size=0.33)
-rede=MLPRegressor(hidden_layer_sizes=[128,128,64],
-                  activation='relu',
-                  max_iter=100000)
-rede.fit(Xtrain,Ytrain)
-r2train=rede.score(Xtrain, Ytrain)
-print("R2 Score do treinamento: ", r2train)
-r2test=rede.score(Xtest, Ytest)
-print("R2 Score do teste: ", r2test)
 
 class InvertedPendulum():
     # Initialize environment.
@@ -174,18 +160,35 @@ I = m*L**2 / 12
 # sensores[3]: velocidade angular.
 # SETPOINT em env.xRef.
 
+#k1=1511
+#k2=2194
+#k3=8935
+#k4=1600
 
+
+
+'''
+finalized_model73
+k1=150
+k2=7
+k3=850
+k4=90'''
+
+k1=-2416
+k2=1087
+k3=4789
+k4=1482
 Sensores_sim=np.zeros(4)
 # Função de controle: Ação nula.
 def funcao_controle_1(sensores):
     
-    Sensores_sim[0]=env.xRef-sensores[0]
-    Sensores_sim[1]=sensores[1]
-    Sensores_sim[2]=sensores[2]
-    Sensores_sim[3]=sensores[3]
+    Sensores_sim[0]=(sensores[0]-env.xRef)*-k1
+    Sensores_sim[1]=sensores[1]*k2
+    Sensores_sim[2]=sensores[2]*k3
+    Sensores_sim[3]=sensores[3]*k4
     acao=rede.predict([Sensores_sim])
-    print(acao)
-    return acao
+    print(acao,(env.xRef-sensores[0]))
+    return acao*1
 
 
 # Função de controle.
@@ -209,7 +212,8 @@ def funcao_controle_3(sensores):
 
 
 # Cria o ambiente de simulação.
-env = InvertedPendulum(0.50)
+#env = InvertedPendulum(0.90)
+env = InvertedPendulum(random.randint(-10,10)/10)
 
 # Reseta o ambiente de simulação.
 sensores = env.reset()
