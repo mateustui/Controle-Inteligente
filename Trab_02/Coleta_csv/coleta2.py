@@ -1,5 +1,3 @@
-
-
 import pygame
 import numpy as np
 from scipy import linalg
@@ -7,10 +5,11 @@ from random import randrange
 import csv
 import pandas as pd
 import openpyxl
+import random
 
 class InvertedPendulum():
     # Initialize environment.
-    def __init__(self, xRef = 0.0, randomParameters = False, randomSensor = True, randomActuator = True):
+    def __init__(self, xRef = 0.0, randomParameters = False, randomSensor = False, randomActuator = False):
         # System parameters.
         self.tau = 0.01
         if not randomParameters:
@@ -86,7 +85,7 @@ class InvertedPendulum():
             if (event.type == pygame.QUIT):
                 pygame.quit()
                 self.finish = True
-                tabelaDf.to_csv('teste3.csv', index=False, header=None)
+                tabelaDf.to_csv('teste5.csv', index=False, header=None)
                 # df = pd.read_csv("PenduloInvertidoFuzzyArtigo.csv", index_col=False)
                 return None
             
@@ -206,7 +205,7 @@ def funcao_controle_3(sensores):
 
 
 # Cria o ambiente de simulação.
-env = InvertedPendulum(0.5)
+env = InvertedPendulum(random.randint(-10,10)/10)
 
 # Reseta o ambiente de simulação.
 sensores = env.reset()
@@ -226,7 +225,7 @@ while True:
     # Aplica a ação de controle.
     sensores = env.step(acao)
 
-    tabelaDf.loc[i] = [(sensores[0]-env.xRef)*k1, sensores[1]*k2, sensores[2]*k3, sensores[3]*k4, acao]
+    tabelaDf.loc[i] = [(sensores[0]-env.xRef), sensores[1], sensores[2], sensores[3], acao]
     i = i + 1
     
 env.close()

@@ -6,9 +6,9 @@ import pandas as pd
 import pickle
 from sklearn.model_selection import train_test_split
 import random
+import matplotlib.pyplot as plt
 
-
-rede = pickle.load(open(r'C:\Users\Mateus\Meu Drive\Compartilhado\eng\9_periodo\Controle inteligente\Trabalho 3\finalized_model4421.sav', 'rb'))
+rede = pickle.load(open(r'finalized_model_sem_espaco.sav', 'rb'))
 
 
 class InvertedPendulum():
@@ -165,24 +165,15 @@ I = m*L**2 / 12
 #k3=8935
 #k4=1600
 
-
-
-'''
-finalized_model73
-k1=150
-k2=7
-k3=850
-k4=90'''
-
-k1=-2416
-k2=1087
-k3=4789
-k4=1482
+k1=1
+k2=1
+k3=1
+k4=1
 Sensores_sim=np.zeros(4)
 # Função de controle: Ação nula.
 def funcao_controle_1(sensores):
     
-    Sensores_sim[0]=(sensores[0]-env.xRef)*-k1
+    Sensores_sim[0]=(sensores[0]-env.xRef)*k1
     Sensores_sim[1]=sensores[1]*k2
     Sensores_sim[2]=sensores[2]*k3
     Sensores_sim[3]=sensores[3]*k4
@@ -217,7 +208,7 @@ env = InvertedPendulum(random.randint(-10,10)/10)
 
 # Reseta o ambiente de simulação.
 sensores = env.reset()
-
+acao_lista=[]
 while True:
     # Renderiza o simulador.
     env.render()
@@ -226,8 +217,12 @@ while True:
     
     # Calcula a ação de controle.
     acao = funcao_controle_1(sensores)  # É ESSA A FUNÇÃO QUE VOCÊS DEVEM PROJETAR.
-    
+    acao_lista.append(acao)
     # Aplica a ação de controle.
     sensores = env.step(acao)
     
 env.close()
+
+
+plt.plot(np.array(acao_lista))
+plt.show()
